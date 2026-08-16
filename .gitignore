@@ -1,17 +1,56 @@
 # Godot 4+ specific ignores
 .godot/
-.nomedia
-
-# Godot-specific ignores
 .import/
+*.uid
 export.cfg
+export_presets.cfg
 export_credentials.cfg
-*.tmp
 
-# Imported translations (automatically generated from CSV files)
-*.translation
+# OS-specific ignores
+.DS_Store
+.DS_STORE
+Thumbs.db
+
+# Editor and IDE ignores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.iml
+
+# SCons / C++ compilation artifacts
+platforms/gdextension/.sconsign.dblite
+platforms/gdextension/godot-cpp/bin/
+platforms/gdextension/godot-cpp/gen/
+*.o
+*.os
+*.obj
+*.a
+*.lib
+*.exp
+*.pdb
+
+# Compiled GDExtension binaries
+platforms/godot_editor/addons/godot_terminal/bin/*
+!platforms/godot_editor/addons/godot_terminal/bin/.gdignore
+
+# Build and Backup ignores
+*.old
+*.bak
+*.tmp
+*.log
+__pycache__/
+.cache/
+.venv/
 
 # Mono-specific ignores
 .mono/
+mono_crash*.json
 data_*/
-mono_crash.*.json
+
+# Temporary
+tmp/
+
+# Antigravity CLI
+.antigravitycli/

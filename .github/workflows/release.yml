@@ -1,0 +1,178 @@
+name: Release Godot Terminal
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release Tag (e.g. v1.0.0)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-binaries:
+    name: Build (${{ matrix.platform }}, ${{ matrix.arch }}, ${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS
+          - os: macos-14
+            platform: macos
+            arch: arm64
+            target: template_debug
+          - os: macos-14
+            platform: macos
+            arch: arm64
+            target: template_release
+          - os: macos-14
+            platform: macos
+            arch: x86_64
+            target: template_debug
+          - os: macos-14
+            platform: macos
+            arch: x86_64
+            target: template_release
+
+          # Linux
+          - os: ubuntu-22.04
+            platform: linux
+            arch: x86_64
+            target: template_debug
+          - os: ubuntu-22.04
+            platform: linux
+            arch: x86_64
+            target: template_release
+          - os: ubuntu-22.04
+            platform: linux
+            arch: arm64
+            target: template_debug
+          - os: ubuntu-22.04
+            platform: linux
+            arch: arm64
+            target: template_release
+
+          # Windows
+          - os: windows-2022
+            platform: windows
+            arch: x86_64
+            target: template_debug
+          - os: windows-2022
+            platform: windows
+            arch: x86_64
+            target: template_release
+          - os: windows-2022
+            platform: windows
+            arch: arm64
+            target: template_debug
+          - os: windows-2022
+            platform: windows
+            arch: arm64
+            target: template_release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install SCons
+        run: python -m pip install scons
+
+      - name: Install Linux ARM64 Cross-Compiler
+        if: matrix.platform == 'linux' && matrix.arch == 'arm64'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: Set up MSVC (Windows)
+        if: matrix.platform == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+
+      - name: Compile GDExtension Binary
+        run: |
+          scons -C platforms/gdextension platform=${{ matrix.platform }} target=${{ matrix.target }} arch=${{ matrix.arch }}
+
+      - name: Upload Binary Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.platform }}-${{ matrix.arch }}-${{ matrix.target }}
+          path: platforms/godot_editor/addons/godot_terminal/bin/libgodot_terminal.*
+
+  create-release:
+    name: Package & Create Release
+    needs: build-binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine Version Tag
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.tag_name }}" ]; then
+            TAG="${{ github.event.inputs.tag_name }}"
+          elif [ "${{ github.ref_type }}" = "tag" ]; then
+            TAG="${{ github.ref_name }}"
+          else
+            PLUGIN_VERSION=$(grep 'version=' platforms/godot_editor/addons/godot_terminal/plugin.cfg | cut -d'"' -f2)
+            TAG="v${PLUGIN_VERSION:-1.0.0}"
+          fi
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Prepare Plugin Directory
+        run: |
+          mkdir -p platforms/godot_editor/addons/godot_terminal/bin
+          touch platforms/godot_editor/addons/godot_terminal/bin/.gdignore
+
+      - name: Download All Binaries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: binary-*
+          merge-multiple: true
+          path: platforms/godot_editor/addons/godot_terminal/bin
+
+      - name: Verify Binary Files
+        run: |
+          echo ">>> Binaries received:"
+          ls -la platforms/godot_editor/addons/godot_terminal/bin
+
+      - name: Create Release Zip Package
+        run: |
+          ZIP_NAME="godot-terminal-${{ steps.version.outputs.TAG }}.zip"
+          cd platforms/godot_editor
+          zip -r "../../$ZIP_NAME" addons/godot_terminal
+          cd ../..
+          echo "ZIP_PATH=$ZIP_NAME" >> $GITHUB_ENV
+
+      - name: Upload Release Archive Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ZIP_PATH }}
+          path: ${{ env.ZIP_PATH }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        with:
+          tag_name: ${{ steps.version.outputs.TAG }}
+          name: Godot Terminal ${{ steps.version.outputs.TAG }}
+          files: ${{ env.ZIP_PATH }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

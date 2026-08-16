@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+import os
+import sys
+
+env = SConscript("godot-cpp/SConstruct", {"api_version": "4.6"})
+
+env.Append(CPPPATH=[
+    "src/",
+    "thirdparty/libvterm/include/",
+])
+
+sources = [
+    "src/register_types.cpp",
+    "src/terminal_pty.cpp",
+    "src/terminal_emulator.cpp",
+    "thirdparty/libvterm/src/encoding.c",
+    "thirdparty/libvterm/src/keyboard.c",
+    "thirdparty/libvterm/src/mouse.c",
+    "thirdparty/libvterm/src/parser.c",
+    "thirdparty/libvterm/src/pen.c",
+    "thirdparty/libvterm/src/screen.c",
+    "thirdparty/libvterm/src/state.c",
+    "thirdparty/libvterm/src/unicode.c",
+    "thirdparty/libvterm/src/vterm.c",
+]
+
+if env["platform"] == "windows":
+    sources.append("src/pty/pty_driver_windows.cpp")
+else:
+    sources.append("src/pty/pty_driver_posix.cpp")
+
+out_dir = "../godot_editor/addons/godot_terminal/bin"
+
+if env["platform"] == "macos":
+    library = env.SharedLibrary(
+        "{}/libgodot_terminal.{}.{}.{}.dylib".format(
+            out_dir, env["platform"], env["target"], env["arch"]
+        ),
+        source=sources,
+    )
+elif env["platform"] == "windows":
+    library = env.SharedLibrary(
+        "{}/libgodot_terminal.{}.{}.{}.dll".format(
+            out_dir, env["platform"], env["target"], env["arch"]
+        ),
+        source=sources,
+    )
+else:
+    library = env.SharedLibrary(
+        "{}/libgodot_terminal.{}.{}.{}.so".format(
+            out_dir, env["platform"], env["target"], env["arch"]
+        ),
+        source=sources,
+    )
+
+env.NoCache(library)
+Default(library)
