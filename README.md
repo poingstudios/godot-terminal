@@ -24,7 +24,7 @@
 - **🎨 True ANSI Terminal Emulation**: Integrated with `libvterm` supporting standard ANSI colors, 24-bit RGB colors, bold/underline text, alternate screen buffers (`vim`, `htop`, `top`), and interactive TUI apps (e.g. `bubbletea`, `lipgloss`, `fzf`, `agy`).
 - **🔗 Smart Clickable Links**: Automatically detects file paths and URLs in output; click to open URLs in your browser or jump straight to scripts and line numbers in the Godot script editor.
 - **📑 Multi-Tab & Splits**: Open multiple shells (`zsh`, `bash`, `fish`, `powershell`, `cmd`), split horizontally or vertically, and rename tabs dynamically.
-- **⚡ Hotkey Toggle**: Open and collapse the terminal dock instantly from anywhere in the editor with ``Ctrl + ` `` (or ``Cmd + ` `` on macOS).
+- **⚡ Hotkey Toggle**: Open and collapse the terminal dock instantly from anywhere in the editor with <kbd>Ctrl</kbd> + <kbd>\`</kbd> (or <kbd>Cmd</kbd> + <kbd>\`</kbd> on macOS).
 - **⚙️ Configurable**: Customize font size, scrollback buffer limit, default shell, and shortcuts via the built-in settings panel.
 
 ---
@@ -44,11 +44,11 @@
 
 | Action | Shortcut | Description |
 | :--- | :--- | :--- |
-| **Toggle Terminal** | ``Ctrl + ` `` / ``Cmd + ` `` | Toggle the terminal bottom dock open/collapsed |
-| **Copy Selection** | `Ctrl + C` / `Cmd + C` | Copy selected text to clipboard (when text is selected) |
-| **Paste** | `Ctrl + V` / `Cmd + V` | Paste clipboard text into the terminal |
-| **Clear Buffer** | `Ctrl + L` / `Cmd + L` | Clear scrollback buffer and screen |
-| **Interrupt / SIGINT** | `Ctrl + C` | Send interrupt signal to active process (when no text is selected) |
+| **Toggle Terminal** | <kbd>Ctrl</kbd> + <kbd>\`</kbd> / <kbd>Cmd</kbd> + <kbd>\`</kbd> | Toggle the terminal bottom dock open/collapsed |
+| **Copy Selection** | <kbd>Ctrl</kbd> + <kbd>C</kbd> / <kbd>Cmd</kbd> + <kbd>C</kbd> | Copy selected text to clipboard (when text is selected) |
+| **Paste** | <kbd>Ctrl</kbd> + <kbd>V</kbd> / <kbd>Cmd</kbd> + <kbd>V</kbd> | Paste clipboard text into the terminal |
+| **Clear Buffer** | <kbd>Ctrl</kbd> + <kbd>L</kbd> / <kbd>Cmd</kbd> + <kbd>L</kbd> | Clear scrollback buffer and screen |
+| **Interrupt / SIGINT** | <kbd>Ctrl</kbd> + <kbd>C</kbd> | Send interrupt signal to active process (when no text is selected) |
 
 ---
 
