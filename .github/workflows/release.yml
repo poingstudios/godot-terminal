@@ -104,12 +104,12 @@ jobs:
 
       - name: Compile GDExtension Binary
         run: |
-          scons -C platforms/gdextension platform=${{ matrix.platform }} target=${{ matrix.target }} arch=${{ matrix.arch }}
-        env:
-          CC: ${{ matrix.platform == 'linux' && matrix.arch == 'arm64' && 'aarch64-linux-gnu-gcc' || '' }}
-          CXX: ${{ matrix.platform == 'linux' && matrix.arch == 'arm64' && 'aarch64-linux-gnu-g++' || '' }}
-          AR: ${{ matrix.platform == 'linux' && matrix.arch == 'arm64' && 'aarch64-linux-gnu-ar' || '' }}
-          RANLIB: ${{ matrix.platform == 'linux' && matrix.arch == 'arm64' && 'aarch64-linux-gnu-ranlib' || '' }}
+          EXTRA_ARGS=""
+          if [ "${{ matrix.platform }}" = "linux" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
+            EXTRA_ARGS="CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ AR=aarch64-linux-gnu-ar RANLIB=aarch64-linux-gnu-ranlib"
+          fi
+          scons -C platforms/gdextension platform=${{ matrix.platform }} target=${{ matrix.target }} arch=${{ matrix.arch }} $EXTRA_ARGS
+        shell: bash
 
       - name: Upload Binary Artifact
         uses: actions/upload-artifact@v4
