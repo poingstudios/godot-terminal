@@ -6,7 +6,7 @@
   [![Godot Engine](https://img.shields.io/badge/Godot-4.x-478CBF?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org)
   [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
   [![Platform](https://img.shields.io/badge/Platform-macOS%20|%20Windows%20|%20Linux-lightgrey?style=for-the-badge)](https://github.com/poingstudios/godot-terminal)
-  [![Discord](https://img.shields.io/discord/835158652399222834?color=5865F2&label=Discord&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/fhbyqgm7ky)
+  [![Discord](https://img.shields.io/badge/Discord-Poing_Studios-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/YEPvYjSSMk)
 
   **The ultimate built-in terminal shell for Godot 4.**  
   Bring the full power of your native system shell directly into the Godot editor bottom panel.

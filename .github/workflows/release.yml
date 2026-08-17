@@ -105,6 +105,11 @@ jobs:
       - name: Compile GDExtension Binary
         run: |
           scons -C platforms/gdextension platform=${{ matrix.platform }} target=${{ matrix.target }} arch=${{ matrix.arch }}
+        env:
+          CC: ${{ matrix.platform == 'linux' && matrix.arch == 'arm64' && 'aarch64-linux-gnu-gcc' || '' }}
+          CXX: ${{ matrix.platform == 'linux' && matrix.arch == 'arm64' && 'aarch64-linux-gnu-g++' || '' }}
+          AR: ${{ matrix.platform == 'linux' && matrix.arch == 'arm64' && 'aarch64-linux-gnu-ar' || '' }}
+          RANLIB: ${{ matrix.platform == 'linux' && matrix.arch == 'arm64' && 'aarch64-linux-gnu-ranlib' || '' }}
 
       - name: Upload Binary Artifact
         uses: actions/upload-artifact@v4
